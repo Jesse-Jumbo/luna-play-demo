@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LunaPlay 月之盒 - 情侶主題訂閱盒服務</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">🌙 LunaPlay 月之盒</div>
+            <ul class="nav-menu">
+                <li><a href="#home">首頁</a></li>
+                <li><a href="#features">服務內容</a></li>
+                <li><a href="#themes">主題盒</a></li>
+                <li><a href="#pricing">訂閱方案</a></li>
+                <li><a href="#community">社群</a></li>
+                <li id="loginNavItem"><a href="login.html">登入</a></li>
+                <li id="dashboardNavItem" style="display: none;"><a href="dashboard.html">個人中心</a></li>
+                <li id="logoutNavItem" style="display: none;"><a href="#" onclick="handleLogout(); return false;">登出</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title">LunaPlay 月之盒</h1>
+                <p class="hero-subtitle">每月驚喜，探索親密關係的無限可能</p>
+                <p class="hero-description">隱密包裝 · 主題體驗 · 專業指導 · 匿名社群</p>
+                <button class="btn-primary" onclick="checkLoginAndRedirect('dashboard.html')">立即訂閱</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <div class="container">
+            <h2 class="section-title">服務內容</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">📦</div>
+                    <h3>每月主題盒</h3>
+                    <p>每月寄送不同主題的體驗盒（水手服、貓咪主題、感官探索等），內含服裝、輕度道具、配件與情境指南</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔒</div>
+                    <h3>隱密包裝</h3>
+                    <p>外觀完全看不出內容物，保護您的隱私</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📚</div>
+                    <h3>教學與社群</h3>
+                    <p>提供 App/網站，主動推播性教育內容，並設有匿名社群讓用戶討論</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Themes Section -->
+    <section id="themes" class="themes">
+        <div class="container">
+            <h2 class="section-title">主題盒類型</h2>
+            <div class="themes-grid">
+                <div class="theme-card" data-theme="roleplay" onclick="toggleThemeProducts('roleplay', this)">
+                    <div class="theme-image">
+                        <img src="assets/水手服女.webp" alt="水手服主題" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                        <div style="display: none; font-size: 4rem;">👗</div>
+                    </div>
+                    <h3>輕度角色扮演</h3>
+                    <p>水手服、貓耳、護士服等主題服裝與配件</p>
+                </div>
+                <div class="theme-card" data-theme="sensory" onclick="toggleThemeProducts('sensory', this)">
+                    <div class="theme-image">
+                        <img src="assets/感官刺激羽毛.webp" alt="感官探索" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                        <div style="display: none; font-size: 4rem;">✨</div>
+                    </div>
+                    <h3>感官探索</h3>
+                    <p>羽毛、絲巾眼罩、香氛蠟燭等探索道具</p>
+                </div>
+                <div class="theme-card" data-theme="bdsm" onclick="toggleThemeProducts('bdsm', this)">
+                    <div class="theme-image">
+                        <img src="assets/束縛手銬.jpeg" alt="BDSM入門" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                        <div style="display: none; font-size: 4rem;">🔗</div>
+                    </div>
+                    <h3>輕度 BDSM 入門</h3>
+                    <p>柔軟手銬、項圈等入門道具</p>
+                </div>
+                <div class="theme-card" data-theme="romantic" onclick="toggleThemeProducts('romantic', this)">
+                    <div class="theme-image">
+                        <img src="assets/香精.webp" alt="浪漫氛圍" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                        <div style="display: none; font-size: 4rem;">💕</div>
+                    </div>
+                    <h3>浪漫氛圍</h3>
+                    <p>按摩精油、情趣卡牌遊戲等浪漫元素</p>
+                </div>
+            </div>
+            
+            <!-- Theme Product Carousels -->
+            <div class="theme-products-carousel" id="carousel-roleplay">
+                <div class="carousel-container">
+                    <div class="carousel-track" id="track-roleplay"></div>
+                    <div class="carousel-nav">
+                        <button class="carousel-nav-button" onclick="carouselPrev('roleplay'); event.stopPropagation();">‹</button>
+                        <button class="carousel-nav-button" onclick="carouselNext('roleplay'); event.stopPropagation();">›</button>
+                    </div>
+                </div>
+            </div>
+            <div class="theme-products-carousel" id="carousel-sensory">
+                <div class="carousel-container">
+                    <div class="carousel-track" id="track-sensory"></div>
+                    <div class="carousel-nav">
+                        <button class="carousel-nav-button" onclick="carouselPrev('sensory'); event.stopPropagation();">‹</button>
+                        <button class="carousel-nav-button" onclick="carouselNext('sensory'); event.stopPropagation();">›</button>
+                    </div>
+                </div>
+            </div>
+            <div class="theme-products-carousel" id="carousel-bdsm">
+                <div class="carousel-container">
+                    <div class="carousel-track" id="track-bdsm"></div>
+                    <div class="carousel-nav">
+                        <button class="carousel-nav-button" onclick="carouselPrev('bdsm'); event.stopPropagation();">‹</button>
+                        <button class="carousel-nav-button" onclick="carouselNext('bdsm'); event.stopPropagation();">›</button>
+                    </div>
+                </div>
+            </div>
+            <div class="theme-products-carousel" id="carousel-romantic">
+                <div class="carousel-container">
+                    <div class="carousel-track" id="track-romantic"></div>
+                    <div class="carousel-nav">
+                        <button class="carousel-nav-button" onclick="carouselPrev('romantic'); event.stopPropagation();">‹</button>
+                        <button class="carousel-nav-button" onclick="carouselNext('romantic'); event.stopPropagation();">›</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="pricing">
+        <div class="container">
+            <h2 class="section-title">訂閱方案</h2>
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <h3>單次購買</h3>
+                    <div class="price">首年限定</div>
+                    <p class="price-desc">體驗一次主題盒</p>
+                    <ul class="pricing-features">
+                        <li><span class="feature-icon">✓</span> <span class="feature-text">一套主題服裝</span></li>
+                        <li><span class="feature-icon">✓</span> <span class="feature-text">2-3 個配件/道具</span></li>
+                        <li><span class="feature-icon">✓</span> <span class="feature-text">潤滑液</span></li>
+                        <li><span class="feature-icon">✓</span> <span class="feature-text">情境指南卡</span></li>
+                        <li><span class="feature-icon cross">✗</span> <span class="feature-text">社群會員資格</span></li>
+                        <li><span class="feature-icon cross">✗</span> <span class="feature-text">專家專欄優先閱讀</span></li>
+                        <li><span class="feature-icon cross">✗</span> <span class="feature-text">可票選下個月主題</span></li>
+                    </ul>
+                    <button class="btn-secondary" onclick="checkLoginAndRedirect('dashboard.html')">立即購買</button>
+                </div>
+                <div class="pricing-card featured">
+                    <div class="bonus-badge-top">12月加送1個月</div>
+                    <h3>每年訂閱</h3>
+                    <div class="price">12 個月<span class="bonus-month">+1</span></div>
+                    <p class="price-desc">全年享受主題盒</p>
+                    <ul class="pricing-features">
+                        <li><span class="feature-icon">✓</span> <span class="feature-text">12 套主題服裝</span></li>
+                        <li><span class="feature-icon">✓</span> <span class="feature-text">24-36 個配件/道具</span></li>
+                        <li><span class="feature-icon">✓</span> <span class="feature-text">潤滑液 × 12</span></li>
+                        <li><span class="feature-icon">✓</span> <span class="feature-text">情境指南卡 × 12</span></li>
+                        <li><span class="feature-icon">✓</span> <span class="feature-text">社群會員資格</span></li>
+                        <li><span class="feature-icon">✓</span> <span class="feature-text">專家專欄優先閱讀</span></li>
+                        <li><span class="feature-icon">✓</span> <span class="feature-text">可票選下個月主題</span></li>
+                    </ul>
+                    <button class="btn-primary" onclick="checkLoginAndRedirect('dashboard.html')">立即訂閱</button>
+                </div>
+                <div class="pricing-card">
+                    <h3>每季訂閱</h3>
+                    <div class="price">3 個月</div>
+                    <p class="price-desc">每季收到不同主題盒</p>
+                    <ul class="pricing-features">
+                        <li><span class="feature-icon">✓</span> <span class="feature-text">3 套主題服裝</span></li>
+                        <li><span class="feature-icon">✓</span> <span class="feature-text">6-9 個配件/道具</span></li>
+                        <li><span class="feature-icon">✓</span> <span class="feature-text">潤滑液 × 3</span></li>
+                        <li><span class="feature-icon">✓</span> <span class="feature-text">情境指南卡 × 3</span></li>
+                        <li><span class="feature-icon">✓</span> <span class="feature-text">社群會員資格</span></li>
+                        <li><span class="feature-icon cross">✗</span> <span class="feature-text">專家專欄優先閱讀</span></li>
+                        <li><span class="feature-icon cross">✗</span> <span class="feature-text">可票選下個月主題</span></li>
+                    </ul>
+                    <button class="btn-secondary" onclick="checkLoginAndRedirect('dashboard.html')">立即訂閱</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Add-ons Section -->
+    <section id="addons" class="addons">
+        <div class="container">
+            <h2 class="section-title">加購選項</h2>
+            <div class="addons-grid">
+                <div class="addon-category" data-category="safety" onclick="toggleAddonCategory('safety', this)">
+                    <h3>安全用品</h3>
+                    <div class="addon-items">
+                        <div class="addon-item" onclick="toggleAddonItem('safety', this); event.stopPropagation();">
+                            <span class="addon-item-icon">▶</span>
+                            <span>各式保險套</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="addon-category" data-category="lubricant" onclick="toggleAddonCategory('lubricant', this)">
+                    <h3>潤滑用品</h3>
+                    <div class="addon-items">
+                        <div class="addon-item" onclick="toggleAddonItem('lubricant', this); event.stopPropagation();">
+                            <span class="addon-item-icon">▶</span>
+                            <span>更多款式的潤滑液</span>
+                        </div>
+                        <div class="addon-item" onclick="toggleAddonItem('lubricant', this); event.stopPropagation();">
+                            <span class="addon-item-icon">▶</span>
+                            <span>按摩油</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="addon-category" data-category="cleaning" onclick="toggleAddonCategory('cleaning', this)">
+                    <h3>清潔用品</h3>
+                    <div class="addon-items">
+                        <div class="addon-item" onclick="toggleAddonItem('cleaning', this); event.stopPropagation();">
+                            <span class="addon-item-icon">▶</span>
+                            <span>清潔噴霧</span>
+                        </div>
+                        <div class="addon-item" onclick="toggleAddonItem('cleaning', this); event.stopPropagation();">
+                            <span class="addon-item-icon">▶</span>
+                            <span>玩具專用清潔液</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="addon-category" data-category="other" onclick="toggleAddonCategory('other', this)">
+                    <h3>其他道具</h3>
+                    <div class="addon-items">
+                        <div class="addon-item" onclick="toggleAddonItem('other', this); event.stopPropagation();">
+                            <span class="addon-item-icon">▶</span>
+                            <span>其他情趣道具</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Addon Product Carousels -->
+            <div class="theme-products-carousel" id="carousel-addon-safety">
+                <div class="carousel-container">
+                    <div class="carousel-track" id="track-addon-safety"></div>
+                    <div class="carousel-nav">
+                        <button class="carousel-nav-button" onclick="carouselPrev('addon-safety'); event.stopPropagation();">‹</button>
+                        <button class="carousel-nav-button" onclick="carouselNext('addon-safety'); event.stopPropagation();">›</button>
+                    </div>
+                </div>
+            </div>
+            <div class="theme-products-carousel" id="carousel-addon-lubricant">
+                <div class="carousel-container">
+                    <div class="carousel-track" id="track-addon-lubricant"></div>
+                    <div class="carousel-nav">
+                        <button class="carousel-nav-button" onclick="carouselPrev('addon-lubricant'); event.stopPropagation();">‹</button>
+                        <button class="carousel-nav-button" onclick="carouselNext('addon-lubricant'); event.stopPropagation();">›</button>
+                    </div>
+                </div>
+            </div>
+            <div class="theme-products-carousel" id="carousel-addon-cleaning">
+                <div class="carousel-container">
+                    <div class="carousel-track" id="track-addon-cleaning"></div>
+                    <div class="carousel-nav">
+                        <button class="carousel-nav-button" onclick="carouselPrev('addon-cleaning'); event.stopPropagation();">‹</button>
+                        <button class="carousel-nav-button" onclick="carouselNext('addon-cleaning'); event.stopPropagation();">›</button>
+                    </div>
+                </div>
+            </div>
+            <div class="theme-products-carousel" id="carousel-addon-other">
+                <div class="carousel-container">
+                    <div class="carousel-track" id="track-addon-other"></div>
+                    <div class="carousel-nav">
+                        <button class="carousel-nav-button" onclick="carouselPrev('addon-other'); event.stopPropagation();">‹</button>
+                        <button class="carousel-nav-button" onclick="carouselNext('addon-other'); event.stopPropagation();">›</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Community Section -->
+    <section id="community" class="community">
+        <div class="container">
+            <h2 class="section-title">匿名社群</h2>
+            <div class="community-grid">
+                <a href="community.html" class="community-card" style="text-decoration: none; color: inherit;">
+                    <div class="community-icon">📝</div>
+                    <h3>心得分享</h3>
+                    <p>看別人開箱不同主題的心得</p>
+                </a>
+                <a href="community.html#qa" class="community-card" style="text-decoration: none; color: inherit;">
+                    <div class="community-icon">❓</div>
+                    <h3>匿名問答</h3>
+                    <p>提出在關係中遇到的疑難雜症</p>
+                </a>
+                <a href="community.html#voting" class="community-card" style="text-decoration: none; color: inherit;">
+                    <div class="community-icon">🗳️</div>
+                    <h3>主題投票</h3>
+                    <p>票選下個月希望推出的主題</p>
+                </a>
+                <a href="community.html#expert" class="community-card" style="text-decoration: none; color: inherit;">
+                    <div class="community-icon">👨‍⚕️</div>
+                    <h3>專家專欄</h3>
+                    <p>閱讀性諮商師、兩性專家的文章（性教育）</p>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Purchase Modal -->
+    <div id="purchaseModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closePurchaseModal()">&times;</span>
+            <h2 id="modalTitle">選擇訂閱方案</h2>
+            <div id="modalBody">
+                <p>請選擇您想要的加購項目：</p>
+                <div class="addons-selection">
+                    <div class="addon-category">
+                        <h3>安全用品</h3>
+                        <label class="addon-item">
+                            <input type="checkbox" name="addon" value="condoms">
+                            <span>各式保險套</span>
+                        </label>
+                    </div>
+                    <div class="addon-category">
+                        <h3>潤滑用品</h3>
+                        <label class="addon-item">
+                            <input type="checkbox" name="addon" value="lubricant">
+                            <span>更多款式的潤滑液</span>
+                        </label>
+                        <label class="addon-item">
+                            <input type="checkbox" name="addon" value="massage-oil">
+                            <span>按摩油</span>
+                        </label>
+                    </div>
+                    <div class="addon-category">
+                        <h3>清潔用品</h3>
+                        <label class="addon-item">
+                            <input type="checkbox" name="addon" value="cleaning-spray">
+                            <span>清潔噴霧</span>
+                        </label>
+                        <label class="addon-item">
+                            <input type="checkbox" name="addon" value="toy-cleaner">
+                            <span>玩具專用清潔液</span>
+                        </label>
+                    </div>
+                    <div class="addon-category">
+                        <h3>其他道具</h3>
+                        <label class="addon-item">
+                            <input type="checkbox" name="addon" value="other-toys">
+                            <span>其他情趣道具</span>
+                        </label>
+                    </div>
+                </div>
+                <button class="btn-primary" onclick="confirmPurchase()">確認購買</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 LunaPlay 月之盒. All rights reserved.</p>
+            <p class="footer-note">隱密包裝 · 專業服務 · 匿名社群</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
+

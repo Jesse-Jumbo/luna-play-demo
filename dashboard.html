@@ -1,0 +1,2048 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>個人中心 - LunaPlay 月之盒</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .dashboard-page {
+            min-height: 100vh;
+            background: var(--bg-color);
+        }
+        
+        .dashboard-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--red-color) 100%);
+            color: var(--white);
+            padding: 2rem 0;
+        }
+        
+        .dashboard-header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .user-info h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .user-info p {
+            opacity: 0.9;
+        }
+        
+        .logout-button {
+            background: rgba(255, 255, 255, 0.2);
+            color: var(--white);
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+        
+        .logout-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        .dashboard-nav {
+            background: var(--white);
+            border-bottom: 2px solid #E5E7EB;
+            padding: 1rem 0;
+        }
+        
+        .dashboard-nav .container {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .nav-tab {
+            padding: 0.75rem 1.5rem;
+            background: transparent;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-light);
+            transition: all 0.3s;
+        }
+        
+        .nav-tab:hover {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--red-color) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .nav-tab.active {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--red-color) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            border-bottom: 3px solid;
+            border-image: linear-gradient(135deg, var(--primary-color) 0%, var(--red-color) 100%) 1;
+        }
+        
+        .tab-content {
+            display: none;
+            padding: 2rem 0;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .content-card {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 1.5rem;
+        }
+        
+        /* Force gradient on all content-card h3 titles */
+        .content-card h3,
+        div.content-card h3,
+        .tab-content .content-card h3,
+        .tab-content.active .content-card h3,
+        #orders .content-card h3,
+        #subscription .content-card h3,
+        #addons .content-card h3,
+        #orders h3,
+        #subscription h3,
+        #addons h3 {
+            font-size: 1.5rem !important;
+            margin-bottom: 1.5rem !important;
+            background: linear-gradient(135deg, #6B46C1 0%, #DC2626 100%) !important;
+            -webkit-background-clip: text !important;
+            -webkit-text-fill-color: transparent !important;
+            background-clip: text !important;
+            color: transparent !important;
+        }
+        
+        /* Additional specific selectors for all h3 in tab-content */
+        .tab-content h3,
+        .tab-content.active h3 {
+            background: linear-gradient(135deg, #6B46C1 0%, #DC2626 100%) !important;
+            -webkit-background-clip: text !important;
+            -webkit-text-fill-color: transparent !important;
+            background-clip: text !important;
+            color: transparent !important;
+        }
+        
+        /* Ensure pricing features alignment */
+        .pricing-features {
+            list-style: none;
+            text-align: left;
+            margin-bottom: 2rem;
+            min-height: 280px;
+        }
+        
+        .pricing-features li {
+            padding: 0.75rem 0;
+            color: var(--text-color);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            border-bottom: 1px solid #E5E7EB;
+        }
+        
+        .pricing-features li:last-child {
+            border-bottom: none;
+        }
+        
+        .pricing-features .feature-icon {
+            min-width: 20px;
+            width: 20px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+            flex-shrink: 0;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .pricing-features .feature-icon:not(.cross) {
+            color: #10B981;
+        }
+        
+        .pricing-features .feature-icon.cross {
+            color: #EF4444;
+        }
+        
+        .pricing-features .feature-text {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            line-height: 1.5;
+        }
+        
+        .order-item {
+            background: #F9FAFB;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid;
+            border-image: linear-gradient(135deg, var(--primary-color) 0%, var(--red-color) 100%) 1;
+        }
+        
+        .order-item:nth-child(even) {
+            border-left: 4px solid;
+            border-image: linear-gradient(135deg, var(--primary-color) 0%, var(--red-color) 100%) 1;
+        }
+        
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        
+        .order-title {
+            font-weight: 600;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--red-color) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .order-date {
+            color: var(--text-light);
+            font-size: 0.875rem;
+        }
+        
+        .order-details {
+            color: var(--text-light);
+            margin-top: 0.5rem;
+        }
+        
+        .subscription-card {
+            background: linear-gradient(135deg, #F3F4F6 0%, #E5E7EB 100%);
+            padding: 2rem;
+            border-radius: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .subscription-status {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .status-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+        
+        .status-active {
+            background: #D1FAE5;
+            color: #065F46;
+        }
+        
+        .status-inactive {
+            background: #FEE2E2;
+            color: #991B1B;
+        }
+        
+        .subscription-info {
+            margin: 1rem 0;
+        }
+        
+        .subscription-info p {
+            margin: 0.5rem 0;
+            color: var(--text-color);
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        
+        .category-container {
+            margin-bottom: 1rem;
+        }
+        
+        .category-header {
+            background: #F9FAFB;
+            padding: 1rem 1.5rem;
+            border-radius: 0.5rem;
+            border: 2px solid #E5E7EB;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+        }
+        
+        .category-header:hover {
+            background: linear-gradient(var(--white), var(--white)) padding-box,
+                        linear-gradient(135deg, var(--primary-color) 0%, var(--red-color) 100%) border-box;
+            border: 2px solid transparent;
+        }
+        
+        .category-header.active {
+            background: linear-gradient(var(--white), var(--white)) padding-box,
+                        linear-gradient(135deg, var(--primary-color) 0%, var(--red-color) 100%) border-box;
+            border: 2px solid transparent;
+        }
+        
+        .category-title {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--text-color);
+        }
+        
+        .category-icon {
+            font-size: 1.5rem;
+        }
+        
+        .category-arrow {
+            font-size: 1.2rem;
+            transition: transform 0.3s;
+            color: var(--text-light);
+        }
+        
+        .category-header.active .category-arrow {
+            transform: rotate(180deg);
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--red-color) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .category-products {
+            display: none;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+            padding: 0 0.5rem;
+        }
+        
+        .category-products.expanded {
+            display: grid;
+            animation: slideDown 0.3s;
+        }
+        
+        .product-card {
+            background: var(--white);
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            border: 2px solid #E5E7EB;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+        
+        .product-card:hover {
+            background: linear-gradient(var(--white), var(--white)) padding-box,
+                        linear-gradient(135deg, var(--primary-color) 0%, var(--red-color) 100%) border-box;
+            border: 2px solid transparent;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+        
+        .product-image {
+            width: 100%;
+            height: 120px;
+            background: linear-gradient(135deg, #F3F4F6 0%, #E5E7EB 100%);
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            color: var(--text-light);
+            overflow: hidden;
+        }
+        
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 0.5rem;
+        }
+        
+        .product-name {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-color);
+            font-size: 0.95rem;
+        }
+        
+        .product-price {
+            color: var(--text-light);
+            font-size: 0.875rem;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Product Detail Modal */
+        .product-modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.3s;
+        }
+        
+        .product-modal-content {
+            background-color: var(--white);
+            margin: 2% auto;
+            padding: 0;
+            border-radius: 1rem;
+            width: 90%;
+            max-width: 900px;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideDown 0.3s;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .product-modal-header {
+            padding: 2rem;
+            border-bottom: 1px solid #E5E7EB;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .product-modal-body {
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+        
+        .product-image-container {
+            background: #F9FAFB;
+            border-radius: 0.5rem;
+            padding: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 300px;
+            overflow: hidden;
+        }
+        
+        .product-image-container img {
+            width: 100%;
+            height: 100%;
+            max-height: 400px;
+            object-fit: contain;
+            border-radius: 0.5rem;
+        }
+        
+        .product-image-container .product-image {
+            font-size: 8rem;
+            color: var(--text-light);
+        }
+        
+        .product-info {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .product-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-color);
+        }
+        
+        .product-price {
+            font-size: 2rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--red-color) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+        }
+        
+        .product-specs {
+            margin: 1.5rem 0;
+        }
+        
+        .spec-item {
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #E5E7EB;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .spec-label {
+            font-weight: 600;
+            color: var(--text-color);
+        }
+        
+        .spec-value {
+            color: var(--text-light);
+        }
+        
+        .quantity-selector {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+        
+        .quantity-button {
+            width: 40px;
+            height: 40px;
+            border: 2px solid #E5E7EB;
+            background: var(--white);
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--text-color);
+            transition: all 0.2s;
+        }
+        
+        .quantity-button:hover {
+            background: linear-gradient(var(--white), var(--white)) padding-box,
+                        linear-gradient(135deg, var(--primary-color) 0%, var(--red-color) 100%) border-box;
+            border: 2px solid transparent;
+        }
+        
+        .quantity-input {
+            width: 80px;
+            text-align: center;
+            padding: 0.5rem;
+            border: 2px solid #E5E7EB;
+            border-radius: 0.5rem;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        
+        .total-price {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-color);
+            margin: 1.5rem 0;
+            padding-top: 1.5rem;
+            border-top: 2px solid #E5E7EB;
+        }
+        
+        .total-price span {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--red-color) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .cart-summary {
+            background: #F9FAFB;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            margin-top: 2rem;
+        }
+        
+        /* Community Embedded Styles */
+        .community-page-embedded {
+            display: flex;
+            height: calc(100vh - 300px);
+            max-height: 600px;
+            background: #36393F;
+            color: #DCDDDE;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+        
+        .community-sidebar {
+            width: 240px;
+            background: #2F3136;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+        
+        .community-server-header {
+            height: 48px;
+            background: #202225;
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            border-bottom: 1px solid #202225;
+            box-shadow: 0 1px 0 rgba(0, 0, 0, 0.2);
+        }
+        
+        .community-server-name {
+            font-weight: 600;
+            font-size: 16px;
+            color: #FFFFFF;
+        }
+        
+        .community-channels-container {
+            flex: 1;
+            padding: 16px 8px;
+            overflow-y: auto;
+        }
+        
+        .community-channel-category {
+            margin-bottom: 24px;
+        }
+        
+        .community-category-header {
+            text-transform: uppercase;
+            font-size: 12px;
+            font-weight: 600;
+            color: #8E9297;
+            padding: 0 8px;
+            margin-bottom: 8px;
+            letter-spacing: 0.02em;
+        }
+        
+        .community-channel-item {
+            display: flex;
+            align-items: center;
+            padding: 6px 8px;
+            margin: 2px 0;
+            border-radius: 4px;
+            cursor: pointer;
+            color: #8E9297;
+            transition: background 0.15s, color 0.15s;
+        }
+        
+        .community-channel-item:hover {
+            background: #393C43;
+            color: #DCDDDE;
+        }
+        
+        .community-channel-item.active {
+            background: #393C43;
+            color: #FFFFFF;
+        }
+        
+        .community-channel-icon {
+            margin-right: 6px;
+            font-size: 16px;
+        }
+        
+        .community-channel-name {
+            font-size: 16px;
+            font-weight: 500;
+        }
+        
+        .community-main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #36393F;
+        }
+        
+        .community-channel-header {
+            height: 48px;
+            background: #36393F;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            box-shadow: 0 1px 0 rgba(4, 4, 5, 0.2);
+            flex-shrink: 0;
+        }
+        
+        .community-channel-header-icon {
+            margin-right: 8px;
+            font-size: 20px;
+        }
+        
+        .community-channel-header-name {
+            font-weight: 600;
+            font-size: 16px;
+            color: #FFFFFF;
+        }
+        
+        .community-messages-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+        }
+        
+        .community-message {
+            margin-bottom: 16px;
+            padding: 8px 16px;
+            border-radius: 4px;
+            transition: background 0.15s;
+        }
+        
+        .community-message:hover {
+            background: rgba(4, 4, 5, 0.07);
+        }
+        
+        .community-message-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+        
+        .community-message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--red-color) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: #FFFFFF;
+            margin-right: 16px;
+            flex-shrink: 0;
+        }
+        
+        .community-message-info {
+            flex: 1;
+        }
+        
+        .community-message-author {
+            font-weight: 600;
+            color: #FFFFFF;
+            margin-right: 8px;
+        }
+        
+        .community-message-timestamp {
+            font-size: 12px;
+            color: #72767D;
+        }
+        
+        .community-message-content {
+            margin-left: 56px;
+            color: #DCDDDE;
+            line-height: 1.375;
+            word-wrap: break-word;
+        }
+        
+        .community-input-area {
+            padding: 16px;
+            background: #40444B;
+            border-top: 1px solid rgba(0, 0, 0, 0.2);
+            flex-shrink: 0;
+        }
+        
+        .community-input-container {
+            background: #40444B;
+            border-radius: 8px;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .community-message-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: #DCDDDE;
+            font-size: 16px;
+            outline: none;
+            resize: none;
+            max-height: 200px;
+            font-family: inherit;
+        }
+        
+        .community-message-input::placeholder {
+            color: #72767D;
+        }
+        
+        .community-send-button {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--red-color) 100%);
+            color: #FFFFFF;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-left: 8px;
+            transition: opacity 0.2s;
+        }
+        
+        .community-send-button:hover {
+            opacity: 0.8;
+        }
+        
+        .community-vote-poll {
+            background: #2F3136;
+            border-radius: 4px;
+            padding: 16px;
+            margin: 8px 0;
+        }
+        
+        .community-vote-option {
+            background: #40444B;
+            border-radius: 4px;
+            padding: 12px;
+            margin: 8px 0;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+        
+        .community-vote-option:hover {
+            background: #484C52;
+        }
+        
+        .community-vote-bar {
+            background: #2F3136;
+            height: 24px;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-top: 8px;
+            position: relative;
+        }
+        
+        .community-vote-fill {
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--red-color) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 8px;
+            color: #FFFFFF;
+            font-size: 12px;
+            font-weight: 600;
+            transition: width 0.3s;
+        }
+        
+        .community-article-card {
+            background: #2F3136;
+            border-radius: 4px;
+            padding: 16px;
+            margin: 8px 0;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+        
+        .community-article-card:hover {
+            background: #393C43;
+        }
+        
+        .community-article-title {
+            font-weight: 600;
+            color: #FFFFFF;
+            margin-bottom: 4px;
+        }
+        
+        .community-article-meta {
+            font-size: 12px;
+            color: #72767D;
+            margin-top: 8px;
+        }
+        
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #E5E7EB;
+        }
+        
+        .cart-item:last-child {
+            border-bottom: none;
+        }
+        
+        .cart-item-info {
+            flex: 1;
+        }
+        
+        .cart-item-name {
+            font-weight: 600;
+            color: var(--text-color);
+        }
+        
+        .cart-item-details {
+            font-size: 0.875rem;
+            color: var(--text-light);
+            margin-top: 0.25rem;
+        }
+        
+        .cart-item-price {
+            font-weight: 600;
+            color: var(--text-color);
+        }
+        
+        .cart-total {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 1rem;
+            margin-top: 1rem;
+            border-top: 2px solid #E5E7EB;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        
+        .cart-total-label {
+            color: var(--text-color);
+        }
+        
+        .cart-total-amount {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--red-color) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        @media (max-width: 768px) {
+            .product-modal-body {
+                grid-template-columns: 1fr;
+            }
+            
+            .product-modal-content {
+                width: 95%;
+                margin: 5% auto;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard-header .container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-page">
+        <!-- Check login status -->
+        <script>
+            if (localStorage.getItem('isLoggedIn') !== 'true') {
+                window.location.href = 'login.html';
+            }
+        </script>
+        
+        <!-- Header -->
+        <div class="dashboard-header">
+            <div class="container">
+                <div class="user-info">
+                    <h1>歡迎回來，<span id="usernameDisplay"></span></h1>
+                    <p>管理您的訂閱與訂單</p>
+                </div>
+                <button class="logout-button" onclick="handleLogout()">登出</button>
+            </div>
+        </div>
+        
+        <!-- Navigation -->
+        <div class="dashboard-nav">
+            <div class="container">
+                <button class="nav-tab active" onclick="switchTab('orders')">📦 購買記錄</button>
+                <button class="nav-tab" onclick="switchTab('subscription')">💳 訂閱方案</button>
+                <button class="nav-tab" onclick="switchTab('addons')">🛒 加購品項</button>
+                <button class="nav-tab" onclick="switchTab('community')">💬 匿名群聊</button>
+            </div>
+        </div>
+        
+        <!-- Content -->
+        <div class="container">
+            <!-- 購買記錄 Tab -->
+            <div id="orders" class="tab-content active">
+                <div class="content-card">
+                    <h3>購買記錄</h3>
+                    
+                    <div class="order-item">
+                        <div class="order-header">
+                            <div class="order-title">水手服主題盒</div>
+                            <div class="order-date">2026-01-01</div>
+                        </div>
+                        <div class="order-details">
+                            訂單編號：ORD-20260101-001<br>
+                            方案：每年訂閱（1/12）<br>
+                            狀態：已出貨
+                        </div>
+                    </div>
+                    
+                    <div class="order-item">
+                        <div class="order-header">
+                            <div class="order-title">感官探索主題盒</div>
+                            <div class="order-date">2025-12-01</div>
+                        </div>
+                        <div class="order-details">
+                            訂單編號：ORD-20251201-001<br>
+                            方案：每年訂閱（12/12）<br>
+                            狀態：已完成
+                        </div>
+                    </div>
+                    
+                    <div class="order-item">
+                        <div class="order-header">
+                            <div class="order-title">輕度 BDSM 入門主題盒</div>
+                            <div class="order-date">2025-11-01</div>
+                        </div>
+                        <div class="order-details">
+                            訂單編號：ORD-20251101-001<br>
+                            方案：每年訂閱（11/12）<br>
+                            狀態：已完成
+                        </div>
+                    </div>
+                    
+                    <div class="order-item">
+                        <div class="order-header">
+                            <div class="order-title">浪漫氛圍主題盒</div>
+                            <div class="order-date">2025-10-01</div>
+                        </div>
+                        <div class="order-details">
+                            訂單編號：ORD-20251001-001<br>
+                            方案：每年訂閱（10/12）<br>
+                            狀態：已完成
+                        </div>
+                    </div>
+                    
+                    <div class="order-item">
+                        <div class="order-header">
+                            <div class="order-title">貓咪主題盒</div>
+                            <div class="order-date">2025-09-15</div>
+                        </div>
+                        <div class="order-details">
+                            訂單編號：ORD-20250915-001<br>
+                            方案：單次購買<br>
+                            狀態：已完成
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 訂閱方案 Tab -->
+            <div id="subscription" class="tab-content">
+                <div class="content-card">
+                    <h3>目前訂閱方案</h3>
+                    
+                    <div class="subscription-card">
+                        <div class="subscription-status">
+                            <div>
+                                <h4 style="margin: 0; background: linear-gradient(135deg, var(--primary-color) 0%, var(--red-color) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">每年訂閱</h4>
+                            </div>
+                            <span class="status-badge status-active">進行中</span>
+                        </div>
+                        
+                        <div class="subscription-info">
+                            <p><strong>開始日期：</strong>2025-01-01</p>
+                            <p><strong>結束日期：</strong>2025-12-31</p>
+                            <p><strong>已收到：</strong>12 / 12 盒</p>
+                            <p><strong>下次出貨：</strong>2026-02-01</p>
+                        </div>
+                        
+                        <div class="action-buttons">
+                            <button class="btn-primary" onclick="changeSubscription()">變更方案</button>
+                            <button class="btn-secondary" onclick="cancelSubscription()">取消訂閱</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="content-card">
+                    <h3>可選方案</h3>
+                    
+                    <div class="pricing-grid" style="margin-top: 1rem;">
+                        <div class="pricing-card">
+                            <h3>單次購買</h3>
+                            <div class="price">首年限定</div>
+                            <p class="price-desc">體驗一次主題盒</p>
+                            <ul class="pricing-features">
+                                <li><span class="feature-icon">✓</span> <span class="feature-text">一套主題服裝</span></li>
+                                <li><span class="feature-icon">✓</span> <span class="feature-text">2-3 個配件/道具</span></li>
+                                <li><span class="feature-icon">✓</span> <span class="feature-text">潤滑液</span></li>
+                                <li><span class="feature-icon">✓</span> <span class="feature-text">情境指南卡</span></li>
+                                <li><span class="feature-icon cross">✗</span> <span class="feature-text">社群會員資格</span></li>
+                                <li><span class="feature-icon cross">✗</span> <span class="feature-text">專家專欄優先閱讀</span></li>
+                                <li><span class="feature-icon cross">✗</span> <span class="feature-text">可票選下個月主題</span></li>
+                            </ul>
+                            <button class="btn-secondary" onclick="selectPlan('single')">選擇此方案</button>
+                        </div>
+                        
+                        <div class="pricing-card featured">
+                            <div class="bonus-badge-top">12月加送1個月</div>
+                            <h3>每年訂閱</h3>
+                            <div class="price">12 個月<span class="bonus-month">+1</span></div>
+                            <p class="price-desc">全年享受主題盒</p>
+                            <ul class="pricing-features">
+                                <li><span class="feature-icon">✓</span> <span class="feature-text">12 套主題服裝</span></li>
+                                <li><span class="feature-icon">✓</span> <span class="feature-text">24-36 個配件/道具</span></li>
+                                <li><span class="feature-icon">✓</span> <span class="feature-text">潤滑液 × 12</span></li>
+                                <li><span class="feature-icon">✓</span> <span class="feature-text">情境指南卡 × 12</span></li>
+                                <li><span class="feature-icon">✓</span> <span class="feature-text">社群會員資格</span></li>
+                                <li><span class="feature-icon">✓</span> <span class="feature-text">專家專欄優先閱讀</span></li>
+                                <li><span class="feature-icon">✓</span> <span class="feature-text">可票選下個月主題</span></li>
+                            </ul>
+                            <button class="btn-primary" onclick="selectPlan('yearly')">選擇此方案</button>
+                        </div>
+                        
+                        <div class="pricing-card">
+                            <h3>每季訂閱</h3>
+                            <div class="price">3 個月</div>
+                            <p class="price-desc">每季收到不同主題盒</p>
+                            <ul class="pricing-features">
+                                <li><span class="feature-icon">✓</span> <span class="feature-text">3 套主題服裝</span></li>
+                                <li><span class="feature-icon">✓</span> <span class="feature-text">6-9 個配件/道具</span></li>
+                                <li><span class="feature-icon">✓</span> <span class="feature-text">潤滑液 × 3</span></li>
+                                <li><span class="feature-icon">✓</span> <span class="feature-text">情境指南卡 × 3</span></li>
+                                <li><span class="feature-icon">✓</span> <span class="feature-text">社群會員資格</span></li>
+                                <li><span class="feature-icon cross">✗</span> <span class="feature-text">專家專欄優先閱讀</span></li>
+                                <li><span class="feature-icon cross">✗</span> <span class="feature-text">可票選下個月主題</span></li>
+                            </ul>
+                            <button class="btn-secondary" onclick="selectPlan('quarterly')">選擇此方案</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 加購品項 Tab -->
+            <div id="addons" class="tab-content">
+                <div class="content-card">
+                    <h3>加購品項</h3>
+                    <p style="color: var(--text-light); margin-bottom: 1.5rem;">點擊類別展開商品，點擊商品查看詳情並選擇數量</p>
+                    
+                    <div id="categoriesContainer">
+                        <!-- Categories will be dynamically generated -->
+                    </div>
+                </div>
+                
+                <!-- 購物車摘要 -->
+                <div class="content-card" id="cartSummary" style="display: none;">
+                    <h3>購物車</h3>
+                    <div class="cart-summary" id="cartItems">
+                        <!-- Cart items will be dynamically added here -->
+                    </div>
+                    <div style="margin-top: 1.5rem; text-align: center;">
+                        <button class="btn-primary" style="padding: 1rem 3rem;" onclick="confirmPurchase()">確認加購</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 匿名群聊 Tab -->
+            <div id="community" class="tab-content">
+                <div class="community-page-embedded">
+                    <!-- Sidebar -->
+                    <div class="community-sidebar">
+                        <div class="community-server-header">
+                            <div class="community-server-name">🌙 LunaPlay 社群</div>
+                        </div>
+                        
+                        <div class="community-channels-container">
+                            <div class="community-channel-category">
+                                <div class="community-category-header">📢 官方頻道</div>
+                                <div class="community-channel-item active" onclick="switchCommunityChannel('announcements')">
+                                    <span class="community-channel-icon">📢</span>
+                                    <span class="community-channel-name">官方公告</span>
+                                </div>
+                            </div>
+                            
+                            <div class="community-channel-category">
+                                <div class="community-category-header">💬 社群頻道</div>
+                                <div class="community-channel-item" onclick="switchCommunityChannel('chat')">
+                                    <span class="community-channel-icon">💬</span>
+                                    <span class="community-channel-name">玩家匿名聊天</span>
+                                </div>
+                                <div class="community-channel-item" onclick="switchCommunityChannel('forum')">
+                                    <span class="community-channel-icon">📝</span>
+                                    <span class="community-channel-name">論壇</span>
+                                </div>
+                            </div>
+                            
+                            <div class="community-channel-category">
+                                <div class="community-category-header">📚 學習頻道</div>
+                                <div class="community-channel-item" onclick="switchCommunityChannel('learning')">
+                                    <span class="community-channel-icon">👨‍⚕️</span>
+                                    <span class="community-channel-name">專家教學</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Main Content -->
+                    <div class="community-main-content">
+                        <div class="community-channel-header">
+                            <span class="community-channel-header-icon" id="communityChannelHeaderIcon">📢</span>
+                            <span class="community-channel-header-name" id="communityChannelHeaderName">官方公告</span>
+                        </div>
+                        
+                        <div class="community-messages-container" id="communityMessagesContainer">
+                            <!-- Messages will be dynamically loaded here -->
+                        </div>
+                        
+                        <div class="community-input-area">
+                            <div class="community-input-container">
+                                <textarea 
+                                    class="community-message-input" 
+                                    id="communityMessageInput" 
+                                    placeholder="輸入訊息..." 
+                                    rows="1"
+                                    onkeydown="handleCommunityKeyDown(event)"
+                                ></textarea>
+                                <button class="community-send-button" id="communitySendButton" onclick="sendCommunityMessage()">發送</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 商品詳情模态窗口 -->
+            <div id="productModal" class="product-modal">
+                <div class="product-modal-content">
+                    <div class="product-modal-header">
+                        <h2 id="modalProductTitle">商品詳情</h2>
+                        <span class="close" onclick="closeProductModal()" style="font-size: 2rem; cursor: pointer; color: var(--text-light);">&times;</span>
+                    </div>
+                    <div class="product-modal-body">
+                        <div class="product-image-container" id="modalProductImage">
+                            <div class="product-image">🛡️</div>
+                        </div>
+                        <div class="product-info">
+                            <div class="product-title" id="modalProductName">商品名稱</div>
+                            <div class="product-price" id="modalProductPrice">NT$ 0</div>
+                            
+                            <div class="product-specs" id="modalProductSpecs">
+                                <!-- Specs will be dynamically added -->
+                            </div>
+                            
+                            <div class="quantity-selector">
+                                <button class="quantity-button" onclick="decreaseQuantity()">−</button>
+                                <input type="number" class="quantity-input" id="productQuantity" value="1" min="1" max="99" onchange="updateTotalPrice()">
+                                <button class="quantity-button" onclick="increaseQuantity()">+</button>
+                            </div>
+                            
+                            <div class="total-price">
+                                小計：<span id="productSubtotal">NT$ 0</span>
+                            </div>
+                            
+                            <button class="btn-primary" style="width: 100%; padding: 1rem;" onclick="addToCart()">加入購物車</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Display username
+        const username = localStorage.getItem('username') || '會員';
+        document.getElementById('usernameDisplay').textContent = username;
+        
+        // Shopping cart
+        let shoppingCart = JSON.parse(localStorage.getItem('shoppingCart') || '[]');
+        let currentProduct = null;
+        
+        // Product data organized by categories
+        const productCategories = {
+            'safety': {
+                name: '安全用品',
+                icon: '🛡️',
+                products: {
+                    'condoms-standard': {
+                        name: '標準型保險套',
+                        image: '🛡️',
+                        price: 299,
+                        specs: [
+                            { label: '品牌', value: '多品牌可選' },
+                            { label: '材質', value: '天然乳膠' },
+                            { label: '規格', value: '12入 / 24入 / 36入' },
+                            { label: '尺寸', value: '標準尺寸' },
+                            { label: '特色', value: '超薄、持久' }
+                        ]
+                    },
+                    'condoms-large': {
+                        name: '大尺寸保險套',
+                        image: '🛡️',
+                        price: 329,
+                        specs: [
+                            { label: '品牌', value: '多品牌可選' },
+                            { label: '材質', value: '天然乳膠 / 聚氨酯' },
+                            { label: '規格', value: '12入 / 24入' },
+                            { label: '尺寸', value: '大尺寸' },
+                            { label: '特色', value: '超薄、持久、顆粒、螺紋' }
+                        ]
+                    },
+                    'condoms-special': {
+                        name: '特殊功能保險套',
+                        image: '🛡️',
+                        price: 399,
+                        specs: [
+                            { label: '品牌', value: '多品牌可選' },
+                            { label: '材質', value: '聚氨酯' },
+                            { label: '規格', value: '12入' },
+                            { label: '尺寸', value: '標準 / 大尺寸' },
+                            { label: '特色', value: '顆粒、螺紋、溫熱、涼感' }
+                        ]
+                    }
+                }
+            },
+            'lubricant': {
+                name: '潤滑用品',
+                icon: '💧',
+                products: {
+                    'lubricant-water': {
+                        name: '水基潤滑液',
+                        image: '💧',
+                        imagePath: 'assets/香精.webp',
+                        price: 399,
+                        specs: [
+                            { label: '容量', value: '50ml / 100ml / 200ml' },
+                            { label: '類型', value: '水基' },
+                            { label: '特色', value: '持久、無味、易清洗' },
+                            { label: '適用', value: '一般使用' },
+                            { label: '保存期限', value: '3年' }
+                        ]
+                    },
+                    'lubricant-silicone': {
+                        name: '矽基潤滑液',
+                        image: '💧',
+                        imagePath: 'assets/香精.webp',
+                        price: 499,
+                        specs: [
+                            { label: '容量', value: '50ml / 100ml' },
+                            { label: '類型', value: '矽基' },
+                            { label: '特色', value: '超持久、不乾燥' },
+                            { label: '適用', value: '一般使用 / 後庭專用' },
+                            { label: '保存期限', value: '3年' }
+                        ]
+                    },
+                    'lubricant-special': {
+                        name: '特殊功能潤滑液',
+                        image: '💧',
+                        imagePath: 'assets/香精.webp',
+                        price: 599,
+                        specs: [
+                            { label: '容量', value: '50ml / 100ml' },
+                            { label: '類型', value: '水基 / 矽基' },
+                            { label: '特色', value: '溫熱、涼感、延時' },
+                            { label: '適用', value: '一般使用 / 後庭專用' },
+                            { label: '保存期限', value: '3年' }
+                        ]
+                    },
+                    'massage-oil': {
+                        name: '按摩油',
+                        image: '🫧',
+                        imagePath: 'assets/香精.webp',
+                        price: 499,
+                        specs: [
+                            { label: '容量', value: '100ml / 200ml' },
+                            { label: '成分', value: '天然植物精油' },
+                            { label: '香味', value: '薰衣草 / 玫瑰 / 無香' },
+                            { label: '特色', value: '溫熱、滋潤、易吸收' },
+                            { label: '保存期限', value: '2年' }
+                        ]
+                    }
+                }
+            },
+            'cleaning': {
+                name: '清潔用品',
+                icon: '🧴',
+                products: {
+                    'cleaning-spray': {
+                        name: '清潔噴霧',
+                        image: '🧴',
+                        price: 199,
+                        specs: [
+                            { label: '容量', value: '150ml' },
+                            { label: '成分', value: '天然抗菌配方' },
+                            { label: '用途', value: '快速清潔、除菌' },
+                            { label: '特色', value: '無酒精、不刺激' },
+                            { label: '保存期限', value: '3年' }
+                        ]
+                    },
+                    'toy-cleaner': {
+                        name: '玩具專用清潔液',
+                        image: '🧽',
+                        price: 299,
+                        specs: [
+                            { label: '容量', value: '200ml' },
+                            { label: '成分', value: '專用清潔配方' },
+                            { label: '適用', value: '矽膠、TPE、ABS材質' },
+                            { label: '特色', value: '深度清潔、除菌、除味' },
+                            { label: '保存期限', value: '3年' }
+                        ]
+                    },
+                    'cleaning-wipes': {
+                        name: '清潔濕巾',
+                        image: '🧻',
+                        price: 149,
+                        specs: [
+                            { label: '規格', value: '20片 / 40片' },
+                            { label: '成分', value: '天然抗菌配方' },
+                            { label: '用途', value: '快速清潔、除菌' },
+                            { label: '特色', value: '方便攜帶、即用即丟' },
+                            { label: '保存期限', value: '2年' }
+                        ]
+                    }
+                }
+            },
+            'toys': {
+                name: '其他道具',
+                icon: '🎁',
+                products: {
+                    'toys-basic': {
+                        name: '基礎情趣道具',
+                        image: '🎁',
+                        imagePath: 'assets/束縛手銬.jpeg',
+                        price: 599,
+                        specs: [
+                            { label: '類型', value: '基礎款式' },
+                            { label: '材質', value: '醫療級矽膠' },
+                            { label: '尺寸', value: '標準尺寸' },
+                            { label: '特色', value: '靜音、防水' },
+                            { label: '保固', value: '1年保固' }
+                        ]
+                    },
+                    'toys-advanced': {
+                        name: '進階情趣道具',
+                        image: '🎁',
+                        imagePath: 'assets/項圈.webp',
+                        price: 1299,
+                        specs: [
+                            { label: '類型', value: '進階款式' },
+                            { label: '材質', value: '醫療級矽膠' },
+                            { label: '尺寸', value: '多種尺寸' },
+                            { label: '特色', value: '靜音、防水、可調速、多模式' },
+                            { label: '保固', value: '1年保固' }
+                        ]
+                    },
+                    'toys-premium': {
+                        name: '高級情趣道具',
+                        image: '🎁',
+                        imagePath: 'assets/BDSM.webp',
+                        price: 1999,
+                        specs: [
+                            { label: '類型', value: '高級款式' },
+                            { label: '材質', value: '醫療級矽膠、不鏽鋼' },
+                            { label: '尺寸', value: '多種尺寸' },
+                            { label: '特色', value: '靜音、防水、可調速、多模式、APP控制' },
+                            { label: '保固', value: '2年保固' }
+                        ]
+                    }
+                }
+            }
+        };
+        
+        // Flatten products for easy lookup
+        const products = {};
+        Object.keys(productCategories).forEach(categoryId => {
+            const category = productCategories[categoryId];
+            Object.keys(category.products).forEach(productId => {
+                products[productId] = category.products[productId];
+            });
+        });
+        
+        function switchTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remove active class from all buttons
+            document.querySelectorAll('.nav-tab').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            
+            // Add active class to clicked button
+            event.target.classList.add('active');
+            
+            // Initialize community if needed
+            if (tabName === 'community') {
+                setTimeout(() => {
+                    loadCommunityMessages('announcements');
+                    // Auto-resize textarea
+                    const messageInput = document.getElementById('communityMessageInput');
+                    if (messageInput) {
+                        messageInput.addEventListener('input', function() {
+                            this.style.height = 'auto';
+                            this.style.height = this.scrollHeight + 'px';
+                        });
+                    }
+                }, 100);
+            }
+            
+            // Update cart display if switching to addons tab
+            if (tabName === 'addons') {
+                updateCartDisplay();
+            }
+        }
+        
+        function handleLogout() {
+            if (confirm('確定要登出嗎？')) {
+                localStorage.removeItem('isLoggedIn');
+                localStorage.removeItem('username');
+                localStorage.removeItem('loginTime');
+                window.location.href = 'index.html';
+            }
+        }
+        
+        function changeSubscription() {
+            switchTab('subscription');
+            document.querySelectorAll('.nav-tab')[1].classList.add('active');
+            document.querySelectorAll('.nav-tab')[0].classList.remove('active');
+        }
+        
+        function cancelSubscription() {
+            if (confirm('確定要取消訂閱嗎？取消後將無法繼續收到主題盒。')) {
+                alert('訂閱已取消。\n\n（此為 Demo 版本，實際功能需連接後端系統）');
+            }
+        }
+        
+        function selectPlan(planType) {
+            if (confirm('確定要變更為此方案嗎？')) {
+                alert('方案已變更！\n\n（此為 Demo 版本，實際功能需連接後端系統）');
+            }
+        }
+        
+        function showProductDetail(productId) {
+            currentProduct = products[productId];
+            if (!currentProduct) return;
+            
+            // Update modal content
+            document.getElementById('modalProductTitle').textContent = currentProduct.name;
+            document.getElementById('modalProductName').textContent = currentProduct.name;
+            
+            // Update product image
+            const imageContainer = document.getElementById('modalProductImage');
+            if (currentProduct.imagePath) {
+                imageContainer.innerHTML = `<img src="${currentProduct.imagePath}" alt="${currentProduct.name}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"><div style="display: none; font-size: 8rem; width: 100%; height: 100%; align-items: center; justify-content: center; color: var(--text-light);">${currentProduct.image}</div>`;
+            } else {
+                imageContainer.innerHTML = `<div class="product-image" style="font-size: 8rem; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: var(--text-light);">${currentProduct.image}</div>`;
+            }
+            
+            document.getElementById('modalProductPrice').textContent = `NT$ ${currentProduct.price}`;
+            document.getElementById('productQuantity').value = 1;
+            
+            // Update specs
+            const specsContainer = document.getElementById('modalProductSpecs');
+            specsContainer.innerHTML = '';
+            currentProduct.specs.forEach(spec => {
+                const specItem = document.createElement('div');
+                specItem.className = 'spec-item';
+                specItem.innerHTML = `
+                    <span class="spec-label">${spec.label}：</span>
+                    <span class="spec-value">${spec.value}</span>
+                `;
+                specsContainer.appendChild(specItem);
+            });
+            
+            // Update total price
+            updateTotalPrice();
+            
+            // Show modal
+            document.getElementById('productModal').style.display = 'block';
+        }
+        
+        function closeProductModal() {
+            document.getElementById('productModal').style.display = 'none';
+            currentProduct = null;
+        }
+        
+        function increaseQuantity() {
+            const input = document.getElementById('productQuantity');
+            const current = parseInt(input.value) || 1;
+            if (current < 99) {
+                input.value = current + 1;
+                updateTotalPrice();
+            }
+        }
+        
+        function decreaseQuantity() {
+            const input = document.getElementById('productQuantity');
+            const current = parseInt(input.value) || 1;
+            if (current > 1) {
+                input.value = current - 1;
+                updateTotalPrice();
+            }
+        }
+        
+        function updateTotalPrice() {
+            if (!currentProduct) return;
+            
+            const quantity = parseInt(document.getElementById('productQuantity').value) || 1;
+            const subtotal = currentProduct.price * quantity;
+            document.getElementById('productSubtotal').textContent = `NT$ ${subtotal.toLocaleString()}`;
+        }
+        
+        function addToCart() {
+            if (!currentProduct) return;
+            
+            const quantity = parseInt(document.getElementById('productQuantity').value) || 1;
+            
+            // Check if product already in cart
+            const existingIndex = shoppingCart.findIndex(item => item.id === Object.keys(products).find(key => products[key] === currentProduct));
+            
+            if (existingIndex >= 0) {
+                // Update quantity
+                shoppingCart[existingIndex].quantity += quantity;
+            } else {
+                // Add new item
+                const productId = Object.keys(products).find(key => products[key] === currentProduct);
+                shoppingCart.push({
+                    id: productId,
+                    name: currentProduct.name,
+                    image: currentProduct.image,
+                    price: currentProduct.price,
+                    quantity: quantity
+                });
+            }
+            
+            // Save to localStorage
+            localStorage.setItem('shoppingCart', JSON.stringify(shoppingCart));
+            
+            // Update cart display
+            updateCartDisplay();
+            
+            // Close modal
+            closeProductModal();
+            
+            // Show notification
+            alert(`已將 ${currentProduct.name} x${quantity} 加入購物車！`);
+        }
+        
+        function updateCartDisplay() {
+            const cartSummary = document.getElementById('cartSummary');
+            const cartItems = document.getElementById('cartItems');
+            
+            if (shoppingCart.length === 0) {
+                cartSummary.style.display = 'none';
+                return;
+            }
+            
+            cartSummary.style.display = 'block';
+            
+            // Clear existing items
+            cartItems.innerHTML = '';
+            
+            let total = 0;
+            
+            shoppingCart.forEach((item, index) => {
+                const itemTotal = item.price * item.quantity;
+                total += itemTotal;
+                
+                const cartItem = document.createElement('div');
+                cartItem.className = 'cart-item';
+                cartItem.innerHTML = `
+                    <div class="cart-item-info">
+                        <div class="cart-item-name">${item.image} ${item.name}</div>
+                        <div class="cart-item-details">數量：${item.quantity} × NT$ ${item.price.toLocaleString()}</div>
+                    </div>
+                    <div class="cart-item-price">NT$ ${itemTotal.toLocaleString()}</div>
+                    <button onclick="removeFromCart(${index})" style="margin-left: 1rem; background: #FEE2E2; color: #991B1B; border: none; padding: 0.5rem; border-radius: 0.25rem; cursor: pointer;">移除</button>
+                `;
+                cartItems.appendChild(cartItem);
+            });
+            
+            // Add total
+            const totalDiv = document.createElement('div');
+            totalDiv.className = 'cart-total';
+            totalDiv.innerHTML = `
+                <span class="cart-total-label">總計：</span>
+                <span class="cart-total-amount">NT$ ${total.toLocaleString()}</span>
+            `;
+            cartItems.appendChild(totalDiv);
+        }
+        
+        function removeFromCart(index) {
+            shoppingCart.splice(index, 1);
+            localStorage.setItem('shoppingCart', JSON.stringify(shoppingCart));
+            updateCartDisplay();
+        }
+        
+        function confirmPurchase() {
+            if (shoppingCart.length === 0) {
+                alert('購物車是空的！');
+                return;
+            }
+            
+            const total = shoppingCart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const itemsList = shoppingCart.map(item => `${item.name} x${item.quantity}`).join('\n');
+            
+            if (confirm(`確認加購以下商品？\n\n${itemsList}\n\n總計：NT$ ${total.toLocaleString()}`)) {
+                alert('感謝您的訂購！\n\n（此為 Demo 版本，實際功能需連接後端系統）');
+                shoppingCart = [];
+                localStorage.setItem('shoppingCart', JSON.stringify(shoppingCart));
+                updateCartDisplay();
+            }
+        }
+        
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('productModal');
+            if (event.target == modal) {
+                closeProductModal();
+            }
+        }
+        
+        // Initialize categories display
+        function initializeCategories() {
+            const container = document.getElementById('categoriesContainer');
+            container.innerHTML = '';
+            
+            Object.keys(productCategories).forEach(categoryId => {
+                const category = productCategories[categoryId];
+                
+                const categoryDiv = document.createElement('div');
+                categoryDiv.className = 'category-container';
+                
+                const header = document.createElement('div');
+                header.className = 'category-header';
+                header.onclick = () => toggleCategory(categoryId);
+                header.innerHTML = `
+                    <div class="category-title">
+                        <span class="category-icon">${category.icon}</span>
+                        <span>${category.name}</span>
+                    </div>
+                    <span class="category-arrow">▼</span>
+                `;
+                
+                const productsDiv = document.createElement('div');
+                productsDiv.className = 'category-products';
+                productsDiv.id = `products-${categoryId}`;
+                
+                Object.keys(category.products).forEach(productId => {
+                    const product = category.products[productId];
+                    const productCard = document.createElement('div');
+                    productCard.className = 'product-card';
+                    productCard.onclick = () => showProductDetail(productId);
+                    
+                    let imageHTML = '';
+                    if (product.imagePath) {
+                        imageHTML = `<img src="${product.imagePath}" alt="${product.name}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"><div style="display: none; font-size: 2.5rem; width: 100%; height: 100%; align-items: center; justify-content: center;">${product.image}</div>`;
+                    } else {
+                        imageHTML = `<div style="font-size: 2.5rem; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">${product.image}</div>`;
+                    }
+                    
+                    productCard.innerHTML = `
+                        <div class="product-image">${imageHTML}</div>
+                        <div class="product-name">${product.name}</div>
+                        <div class="product-price">NT$ ${product.price.toLocaleString()}</div>
+                    `;
+                    productsDiv.appendChild(productCard);
+                });
+                
+                categoryDiv.appendChild(header);
+                categoryDiv.appendChild(productsDiv);
+                container.appendChild(categoryDiv);
+            });
+        }
+        
+        function toggleCategory(categoryId) {
+            const productsDiv = document.getElementById(`products-${categoryId}`);
+            const header = event.currentTarget;
+            
+            if (productsDiv.classList.contains('expanded')) {
+                productsDiv.classList.remove('expanded');
+                header.classList.remove('active');
+            } else {
+                // Close all other categories
+                document.querySelectorAll('.category-products').forEach(div => {
+                    div.classList.remove('expanded');
+                });
+                document.querySelectorAll('.category-header').forEach(h => {
+                    h.classList.remove('active');
+                });
+                
+                // Open this category
+                productsDiv.classList.add('expanded');
+                header.classList.add('active');
+            }
+        }
+        
+        // Initialize cart display
+        updateCartDisplay();
+        
+        // Initialize categories on page load
+        initializeCategories();
+        
+        // Community functions
+        let currentCommunityChannel = 'announcements';
+        const communityUsername = localStorage.getItem('username') || '匿名用戶';
+        
+        const communityChannelData = {
+            announcements: {
+                icon: '📢',
+                name: '官方公告',
+                messages: [
+                    {
+                        author: 'LunaPlay 官方',
+                        avatar: '🌙',
+                        timestamp: '2024-01-15 10:00',
+                        content: '歡迎來到 LunaPlay 月之盒官方社群！',
+                        type: 'text'
+                    },
+                    {
+                        author: 'LunaPlay 官方',
+                        avatar: '🌙',
+                        timestamp: '2024-01-15 10:05',
+                        content: '本月主題投票開始了！請在下方投票選擇下個月的主題。',
+                        type: 'text'
+                    },
+                    {
+                        author: 'LunaPlay 官方',
+                        avatar: '🌙',
+                        timestamp: '2024-01-15 10:10',
+                        content: '主題投票',
+                        type: 'vote',
+                        options: [
+                            { name: '🏖️ 夏日海灘主題', votes: 65, total: 100 },
+                            { name: '🎭 復古風情主題', votes: 35, total: 100 }
+                        ]
+                    }
+                ]
+            },
+            chat: {
+                icon: '💬',
+                name: '玩家匿名聊天',
+                messages: [
+                    {
+                        author: '匿名用戶 #1234',
+                        avatar: '👤',
+                        timestamp: '2024-01-15 09:30',
+                        content: '有人試過水手服主題盒嗎？想聽聽心得～'
+                    },
+                    {
+                        author: '匿名用戶 #5678',
+                        avatar: '👤',
+                        timestamp: '2024-01-15 09:35',
+                        content: '我試過！服裝質感很好，配件也很實用 👍'
+                    },
+                    {
+                        author: '匿名用戶 #9012',
+                        avatar: '👤',
+                        timestamp: '2024-01-15 09:40',
+                        content: '情境指南卡很詳細，第一次嘗試也不用擔心'
+                    }
+                ]
+            },
+            forum: {
+                icon: '📝',
+                name: '論壇',
+                messages: [
+                    {
+                        author: '匿名用戶 #3456',
+                        avatar: '👤',
+                        timestamp: '2024-01-14 20:00',
+                        content: '【心得分享】「水手服主題盒」開箱心得\n\n服裝質感很好，材質柔軟舒適，配件也很實用。情境指南卡很詳細，提供了很多實用的建議。整體來說非常滿意，推薦給想要嘗試角色扮演主題的朋友！'
+                    },
+                    {
+                        author: '匿名用戶 #7890',
+                        avatar: '👤',
+                        timestamp: '2024-01-14 18:00',
+                        content: '【匿名問答】Q: 如何與伴侶討論嘗試新主題？\n\nA: 建議從輕鬆的對話開始，可以先分享感興趣的主題，讓對方知道你的想法。選擇一個放鬆的時刻，用開放的態度溝通，不要給對方壓力。'
+                    },
+                    {
+                        author: '匿名用戶 #2345',
+                        avatar: '👤',
+                        timestamp: '2024-01-14 16:00',
+                        content: '【心得分享】「感官探索盒」初體驗\n\n香氛蠟燭的香味很棒，營造了很好的氛圍。羽毛和眼罩的組合讓體驗更豐富，絲巾的質感也很好。第一次嘗試感官探索，感覺很新鮮有趣！'
+                    }
+                ]
+            },
+            learning: {
+                icon: '👨‍⚕️',
+                name: '專家教學',
+                messages: [
+                    {
+                        author: '王諮商師',
+                        avatar: '👨‍⚕️',
+                        timestamp: '2024-01-15 08:00',
+                        content: '【專家專欄】如何建立健康的親密關係\n\n親密關係的建立需要時間、耐心和溝通。本文將探討如何在關係中建立信任、尊重和理解，以及如何處理關係中的挑戰。',
+                        type: 'article'
+                    },
+                    {
+                        author: '李專家',
+                        avatar: '👨‍⚕️',
+                        timestamp: '2024-01-14 14:00',
+                        content: '【專家專欄】探索與溝通：情侶間的重要課題\n\n在親密關係中，探索新事物和有效溝通是維持關係健康的重要因素。本文分享如何與伴侶討論敏感話題，以及如何建立開放的溝通環境。',
+                        type: 'article'
+                    },
+                    {
+                        author: '張諮商師',
+                        avatar: '👨‍⚕️',
+                        timestamp: '2024-01-13 10:00',
+                        content: '【專家專欄】性教育基礎知識\n\n正確的性教育知識對於建立健康的親密關係至關重要。本文涵蓋性健康、安全性行為、同意等重要主題。',
+                        type: 'article'
+                    }
+                ]
+            }
+        };
+        
+        function switchCommunityChannel(channelName) {
+            currentCommunityChannel = channelName;
+            
+            // Update active channel
+            document.querySelectorAll('.community-channel-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.target.closest('.community-channel-item').classList.add('active');
+            
+            // Update header
+            document.getElementById('communityChannelHeaderIcon').textContent = communityChannelData[channelName].icon;
+            document.getElementById('communityChannelHeaderName').textContent = communityChannelData[channelName].name;
+            
+            // Load messages
+            loadCommunityMessages(channelName);
+        }
+        
+        function loadCommunityMessages(channelName) {
+            const container = document.getElementById('communityMessagesContainer');
+            const messages = communityChannelData[channelName].messages;
+            
+            container.innerHTML = '';
+            
+            messages.forEach(msg => {
+                if (msg.type === 'vote') {
+                    container.appendChild(createCommunityVoteMessage(msg));
+                } else if (msg.type === 'article') {
+                    container.appendChild(createCommunityArticleMessage(msg));
+                } else {
+                    container.appendChild(createCommunityTextMessage(msg));
+                }
+            });
+            
+            container.scrollTop = container.scrollHeight;
+        }
+        
+        function createCommunityTextMessage(msg) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'community-message';
+            
+            messageDiv.innerHTML = `
+                <div class="community-message-header">
+                    <div class="community-message-avatar">${msg.avatar}</div>
+                    <div class="community-message-info">
+                        <span class="community-message-author">${msg.author}</span>
+                        <span class="community-message-timestamp">${msg.timestamp}</span>
+                    </div>
+                </div>
+                <div class="community-message-content">${msg.content.replace(/\n/g, '<br>')}</div>
+            `;
+            
+            return messageDiv;
+        }
+        
+        function createCommunityVoteMessage(msg) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'community-message';
+            
+            let voteHTML = `
+                <div class="community-message-header">
+                    <div class="community-message-avatar">${msg.avatar}</div>
+                    <div class="community-message-info">
+                        <span class="community-message-author">${msg.author}</span>
+                        <span class="community-message-timestamp">${msg.timestamp}</span>
+                    </div>
+                </div>
+                <div class="community-message-content">
+                    <div class="community-vote-poll">
+                        <strong style="color: #FFFFFF;">${msg.content}</strong>
+            `;
+            
+            msg.options.forEach(option => {
+                const percentage = Math.round((option.votes / option.total) * 100);
+                voteHTML += `
+                    <div class="community-vote-option" onclick="communityVoteOption('${option.name}')">
+                        <div>${option.name}</div>
+                        <div class="community-vote-bar">
+                            <div class="community-vote-fill" style="width: ${percentage}%">${percentage}%</div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            voteHTML += '</div></div>';
+            messageDiv.innerHTML = voteHTML;
+            
+            return messageDiv;
+        }
+        
+        function createCommunityArticleMessage(msg) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'community-message';
+            
+            messageDiv.innerHTML = `
+                <div class="community-message-header">
+                    <div class="community-message-avatar">${msg.avatar}</div>
+                    <div class="community-message-info">
+                        <span class="community-message-author">${msg.author}</span>
+                        <span class="community-message-timestamp">${msg.timestamp}</span>
+                    </div>
+                </div>
+                <div class="community-message-content">
+                    <div class="community-article-card" onclick="showCommunityArticle('${msg.content}')">
+                        <div class="community-article-title">${msg.content.split('\n')[0]}</div>
+                        <div style="color: #DCDDDE; margin-top: 8px;">${msg.content.split('\n').slice(1).join('<br>')}</div>
+                        <div class="community-article-meta">點擊閱讀全文</div>
+                    </div>
+                </div>
+            `;
+            
+            return messageDiv;
+        }
+        
+        function sendCommunityMessage() {
+            const input = document.getElementById('communityMessageInput');
+            const content = input.value.trim();
+            
+            if (!content) return;
+            
+            const now = new Date();
+            const timestamp = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+            
+            const newMessage = {
+                author: communityUsername,
+                avatar: '👤',
+                timestamp: timestamp,
+                content: content
+            };
+            
+            communityChannelData[currentCommunityChannel].messages.push(newMessage);
+            loadCommunityMessages(currentCommunityChannel);
+            
+            input.value = '';
+            input.style.height = 'auto';
+        }
+        
+        function handleCommunityKeyDown(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                sendCommunityMessage();
+            }
+        }
+        
+        function communityVoteOption(optionName) {
+            alert(`您已投票給：${optionName}\n\n（此為 Demo 版本，實際功能需連接後端系統）`);
+        }
+        
+        function showCommunityArticle(content) {
+            alert('文章詳情頁面\n\n（此為 Demo 版本，實際功能需連接後端系統）');
+        }
+        
+    </script>
+</body>
+</html>
+
