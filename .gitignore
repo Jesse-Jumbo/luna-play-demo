@@ -1,2 +1,5 @@
 .vercel
 .env*.local
+
+# Mac
+.DS_Store
