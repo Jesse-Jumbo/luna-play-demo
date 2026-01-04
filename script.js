@@ -22,10 +22,12 @@ function updateNavigation() {
 function checkLoginAndRedirect(url) {
     if (localStorage.getItem('isLoggedIn') === 'true') {
         window.location.href = url;
+        return false;
     } else {
         if (confirm('需要登入才能進入社群，是否前往登入頁面？')) {
             window.location.href = 'login.html';
         }
+        return false;
     }
 }
 

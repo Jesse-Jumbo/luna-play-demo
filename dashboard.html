@@ -38,15 +38,13 @@
         }
         
         .home-icon {
-            position: absolute;
-            top: 1rem;
-            left: 1rem;
             font-size: 2rem;
             cursor: pointer;
-            z-index: 3;
             transition: transform 0.3s;
             text-decoration: none;
             color: var(--white);
+            margin-right: 0.5rem;
+            display: inline-block;
         }
         
         .home-icon:hover {
@@ -56,6 +54,8 @@
         .user-info h1 {
             font-size: 2rem;
             margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
         }
         
         .user-info p {
@@ -975,10 +975,9 @@
         
         <!-- Header -->
         <div class="dashboard-header">
-            <a href="index.html" class="home-icon" title="返回首頁">🌙</a>
             <div class="container">
                 <div class="user-info">
-                    <h1>歡迎回來，<span id="usernameDisplay"></span></h1>
+                    <h1><a href="index.html" class="home-icon" title="返回首頁">🌙</a>歡迎回來，<span id="usernameDisplay"></span></h1>
                     <p>管理您的訂閱與訂單</p>
                 </div>
                 <button class="logout-button" onclick="handleLogout()">登出</button>
@@ -2072,6 +2071,41 @@
         function showCommunityArticle(content) {
             alert('文章詳情頁面\n\n（此為 Demo 版本，實際功能需連接後端系統）');
         }
+        
+        // Check URL parameter and switch to community tab if needed
+        window.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const tabParam = urlParams.get('tab');
+            if (tabParam === 'community') {
+                // Remove active class from current tab
+                document.querySelectorAll('.tab-content').forEach(tab => {
+                    tab.classList.remove('active');
+                });
+                document.querySelectorAll('.nav-tab').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                
+                // Activate community tab
+                const communityTab = document.getElementById('community');
+                const communityButton = document.querySelectorAll('.nav-tab')[3]; // community is 4th tab
+                if (communityTab && communityButton) {
+                    communityTab.classList.add('active');
+                    communityButton.classList.add('active');
+                    
+                    // Initialize community
+                    setTimeout(() => {
+                        loadCommunityMessages('announcements');
+                        const messageInput = document.getElementById('communityMessageInput');
+                        if (messageInput) {
+                            messageInput.addEventListener('input', function() {
+                                this.style.height = 'auto';
+                                this.style.height = this.scrollHeight + 'px';
+                            });
+                        }
+                    }, 100);
+                }
+            }
+        });
         
     </script>
 </body>
